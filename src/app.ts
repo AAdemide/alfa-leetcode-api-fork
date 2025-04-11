@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express, { NextFunction, Response } from 'express';
 import cors from 'cors';
 // import rateLimit from 'express-rate-limit';
@@ -20,6 +21,7 @@ import {
 const app = express();
 let cache = apicache.middleware;
 const API_URL = process.env.LEETCODE_API_URL || 'https://leetcode.com/graphql';
+const CC_API_URL = process.env.CC_API_URL || 'http://localhost:8080';
 
 // const limiter = rateLimit({
 //   windowMs: 60 * 60 * 1000, // 1 hour
@@ -30,7 +32,7 @@ const API_URL = process.env.LEETCODE_API_URL || 'https://leetcode.com/graphql';
 // });
 
 app.use(cache('5 minutes'));
-app.use(cors()); //enable all CORS request
+app.use(cors({origin: CC_API_URL})); //enable all CORS request
 // app.use(limiter); //limit to all API
 app.use((req: express.Request, _res: Response, next: NextFunction) => {
   console.log('Requested URL:', req.originalUrl);
