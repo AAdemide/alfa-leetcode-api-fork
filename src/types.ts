@@ -1,4 +1,5 @@
-import { Request } from 'express';
+import type { Request } from 'express';
+
 // User Data
 interface UserDataProfile {
   aboutMe: string;
@@ -23,7 +24,19 @@ interface MatchedUser {
   upcomingBadges: Badge[];
   username: string;
   twitterUrl?: string;
-  submissionCalendar: string;
+  userCalendar: {
+    activeYears: number[];
+    streak: number;
+    totalActiveDays: number;
+    dccBadge: {
+      timestamp: number;
+      badge: {
+        name: string;
+        icon: string;
+      };
+    }[];
+    submissionCalendar: string;
+  };
   submitStats: {
     totalSubmissionNum: {
       difficulty: Difficulty;
@@ -37,6 +50,12 @@ interface MatchedUser {
     }[];
     count: number;
   };
+  tagProblemCounts: {
+    fundamental: skillStats[];
+    intermediate: skillStats[];
+    advanced: skillStats[];
+  };
+  languageProblemCount: { languageName: string; problemsSolved: number }[];
 }
 
 export interface UserData {
@@ -62,8 +81,9 @@ export interface UserData {
     };
   }[];
   matchedUser: MatchedUser;
-  recentAcSubmissionList: {}[];
+  recentAcSubmissionList: object[];
   recentSubmissionList: Submission[];
+  userProfileUserQuestionProgressV2: { count: number; difficulty: string }[];
 }
 
 interface Badge {
@@ -71,26 +91,32 @@ interface Badge {
   icon: string;
 }
 
+interface skillStats {
+  tagName: string;
+  tagSlug: string;
+  problemsSolved: number;
+}
+
 type Difficulty = 'All' | 'Easy' | 'Medium' | 'Hard';
 //User Details
 export type FetchUserDataRequest = Request<
   { username: string },
-  {},
-  { username: string; limit: number },
-  { limit: number }
+  object,
+  { username: string; limit: number; year: number },
+  { limit?: string; year?: string }
 >;
 
 export type TransformedUserDataRequest = Request<
-  {},
-  {},
-  { username: string; limit: number }
+  object,
+  object,
+  { username: string; limit: number; year: number }
 >;
 
 //  ProblemData
 export interface ProblemSetQuestionListData {
   problemsetQuestionList: {
     total: number;
-    questions: {}[];
+    questions: object[];
   };
 }
 
@@ -107,14 +133,14 @@ interface Question {
   companyTagStats: string[];
   difficulty: Difficulty;
   dislikes: number;
-  exampleTestcases: {}[];
-  hints: {}[];
+  exampleTestcases: object[];
+  hints: object[];
   isPaidOnly: boolean;
   likes: number;
   questionId: number;
   questionFrontendId: number;
   solution: string;
-  similarQuestions: {}[];
+  similarQuestions: object[];
   title: string;
   titleSlug: string;
   topicTags: string[];
@@ -150,4 +176,41 @@ export interface TrendingDiscussionObject {
       };
     }[];
   };
+}
+
+// Contest type matching GraphQL query structure
+export interface Contest {
+  title: string;
+  titleSlug: string;
+  startTime: number;
+  duration: number;
+  originStartTime: number;
+  isVirtual: boolean;
+  containsPremium: boolean;
+}
+
+// Generic GraphQL params (username is most common)
+export interface GraphQLParams {
+  username?: string;
+  [key: string]: unknown;
+}
+
+// User profile specific GraphQL response
+export interface UserProfileResponse {
+  matchedUser: {
+    submitStats: {
+      acSubmissionNum: Array<{ count: number }>;
+      totalSubmissionNum: unknown;
+    };
+    submissionCalendar: string;
+    profile: {
+      ranking: number;
+      reputation: number;
+    };
+    contributions: {
+      points: number;
+    };
+  };
+  allQuestionsCount: Array<{ count: number }>;
+  recentSubmissionList: unknown[];
 }
