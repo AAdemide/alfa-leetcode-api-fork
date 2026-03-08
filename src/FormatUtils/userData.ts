@@ -1,4 +1,5 @@
-import { UserData } from '../types';
+import type { UserContest } from '../schema';
+import type { UserData } from '../types';
 
 export const formatUserData = (data: UserData) => ({
   username: data.matchedUser.username,
@@ -25,7 +26,7 @@ export const formatBadgesData = (data: UserData) => ({
   activeBadge: data.matchedUser.activeBadge,
 });
 
-export const formatContestData = (data: UserData) => ({
+export const formatContestData = (data: UserContest) => ({
   contestAttend: data.userContestRanking?.attendedContestsCount,
   contestRating: data.userContestRanking?.rating,
   contestGlobalRanking: data.userContestRanking?.globalRanking,
@@ -33,7 +34,7 @@ export const formatContestData = (data: UserData) => ({
   contestTopPercentage: data.userContestRanking?.topPercentage,
   contestBadges: data.userContestRanking?.badge,
   contestParticipation: data.userContestRankingHistory.filter(
-    (obj) => obj.attended === true
+    (obj) => obj.attended === true,
   ),
 });
 
@@ -62,5 +63,23 @@ export const formatAcSubmissionData = (data: UserData) => ({
 });
 
 export const formatSubmissionCalendarData = (data: UserData) => ({
-  submissionCalendar: data.matchedUser.submissionCalendar,
+  activeYears: data.matchedUser.userCalendar.activeYears,
+  streak: data.matchedUser.userCalendar.streak,
+  totalActiveDays: data.matchedUser.userCalendar.totalActiveDays,
+  dccBadges: data.matchedUser.userCalendar.dccBadge,
+  submissionCalendar: data.matchedUser.userCalendar.submissionCalendar,
+});
+
+export const formatSkillStats = (data: UserData) => ({
+  fundamental: data.matchedUser.tagProblemCounts.fundamental,
+  intermediate: data.matchedUser.tagProblemCounts.intermediate,
+  advanced: data.matchedUser.tagProblemCounts.advanced,
+});
+
+export const formatLanguageStats = (data: UserData) => ({
+  languageProblemCount: data.matchedUser.languageProblemCount,
+});
+
+export const formatProgressStats = (data: UserData) => ({
+  numAcceptedQuestions: data.userProfileUserQuestionProgressV2,
 });
