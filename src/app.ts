@@ -1,6 +1,7 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import apicache from 'apicache';
 import cors from 'cors';
+import express, { type NextFunction, type Response } from 'express';
 // import rateLimit from 'express-rate-limit';
 import * as leetcode from './leetCode';
 import type { FetchUserDataRequest } from './types';
@@ -18,7 +19,7 @@ const CC_API_URL = process.env.CC_API_URL || 'http://localhost:8080';
 // });
 
 app.use(cache('5 minutes'));
-app.use(cors({origin: CC_API_URL})); //enable all CORS request
+app.use(cors({ origin: CC_API_URL })); //enable all CORS request
 // app.use(limiter); //limit to all API
 app.use((req: express.Request, _res: Response, next: NextFunction) => {
   console.log('Requested URL:', req.originalUrl);
